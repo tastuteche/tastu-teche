@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 from tabulate import tabulate
-is_show = True
+is_show = False
 
 
 def set_show(show):
@@ -30,3 +30,24 @@ def df_show(df, df_file, tilte):
 
 def plt_figure(size=15):
     plt.figure(figsize=(size, size))
+
+
+def ax_hbar_value(ax):
+    x_offset = -0.03
+    y_offset = 0.02
+    ax.set_title('Average Recency (days since last purchase)')
+    for p in ax.patches:
+        b = p.get_bbox()
+        val = "{:.0f}".format(b.x1 + b.x0)
+        ax.annotate(val, (b.x1 + x_offset, (b.y0 + b.y1) / 2 + y_offset))
+
+
+def ax_vbar_value(ax):
+    x_offset = -0.03
+    y_offset = 0.02
+    ax.set_title('Number of Customers (y) by number of Orders (x)')
+    ax.set_ylabel('Number of Customers')
+    for p in ax.patches:
+        b = p.get_bbox()
+        val = "{:.0f}".format(b.y1 + b.y0)
+        ax.annotate(val, ((b.x0 + b.x1) / 2 + x_offset, b.y1 + y_offset))
