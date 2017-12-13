@@ -1,4 +1,6 @@
 import matplotlib.pyplot as plt
+import numpy as np
+import networkx as nx
 from tabulate import tabulate
 is_show = False
 
@@ -51,3 +53,28 @@ def ax_vbar_value(ax):
         b = p.get_bbox()
         val = "{:.0f}".format(b.y1 + b.y0)
         ax.annotate(val, ((b.x0 + b.x1) / 2 + x_offset, b.y1 + y_offset))
+
+
+def get_colors(totalDataPoints):
+    return np.random.uniform(low=0.0, high=1.0, size=(totalDataPoints, 3))
+
+
+def pos_adjust(pos0, pos_scale=1):
+    pos = {n: (x * pos_scale, y * pos_scale) for n, (x, y) in pos0.items()}
+    return pos
+
+
+def plt_G(G, pos_scale=1, width_scale=1, edge_alpha=0.2):
+    #pos = nx.spring_layout(G)
+    from networkx.drawing.nx_agraph import graphviz_layout
+    pos0 = graphviz_layout(G, prog='neato')
+    pos = pos_adjust(pos0, pos_scale)
+    edge_labels = {(u, v): "%.3f" % d['weight']
+                   for u, v, d in G.edges(data=True)}
+    edgelist = G.edges()
+    width = [G[u][v]['weight'] * width_scale for u, v in edgelist]
+    nx.draw_networkx_edges(G, pos=pos, edgelist=edgelist,
+                           width=width, alpha=edge_alpha)
+    nx.draw_networkx_edge_labels(G, pos=pos, edge_labels=edge_labels)
+    nx.draw_networkx_nodes(G, pos=pos)
+    nx.draw_networkx_labels(G, pos)
